@@ -8,13 +8,19 @@
 #include <avr/iom328.h>
 #include <util/delay.h>
 #include "uart.h"
+#include "i2c.h"
 
 
 int main(void)
 {
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
+  unsigned n;
+  u8 buf[16];
+
+  i2c_init();
+  uart_init();
+  while (1) {
+    n = uart_getline(buf, 16);
+    // TODO
+  }
 }
 

@@ -10,6 +10,7 @@
 #define UART_H_
 
 #include <avr/iom328.h>
+#include "defines.h"
 
 typedef unsigned char u8;
 
