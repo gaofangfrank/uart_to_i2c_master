@@ -79,3 +79,70 @@ void i2c_stop(void){
   TWCR = C_STOP;
   
 }
+
+unsigned i2c_strerr(u8 status, u8 *strbuf){
+  unsigned len;
+  
+  switch (status) {
+    case S_START: 
+      len = 21;
+      strncpy(strbuf, "START condition sent\n", len);
+      break;
+      
+    case S_RSTART: 
+      len = 30;
+      strncpy(strbuf, "Repeated START condition sent\n", len);
+      break;
+      
+    case S_SLA_W_ACK: 
+      len = 23;
+      strncpy(strbuf, "Write to slave got ACK\n", len);
+      break;
+
+    case S_SLA_W_NACK: 
+      len = 24;
+      strncpy(strbuf, "Write to slave got NACK\n", len);
+      break;
+      
+    case S_SLA_R_ACK: 
+      len = 22;
+      strncpy(strbuf, "Read to slave got ACK\n", len);
+      break;
+
+    case S_SLA_R_NACK: 
+      len = 23;
+      strncpy(strbuf, "Read to slave got NACK\n", len);
+      break;
+
+    case S_W_ACK: 
+      len = 18;
+      strncpy(strbuf, "Data sent got ACK\n", len);
+      break;
+
+    case S_W_NACK: 
+      len = 19;
+      strncpy(strbuf, "Data sent got NACK\n", len);
+      break;
+      
+    case S_R_ACK: 
+      len = 19;
+      strncpy(strbuf, "Data read sent ACK\n", len);
+      break;
+
+    case S_R_NACK: 
+      len = 20;
+      strncpy(strbuf, "Data read sent NACK\n", len);
+      break;
+
+    case S_ARB_LOST: 
+      len = 18;
+      strncpy(strbuf, "Arbitration lost!\n", len);
+      break;
+
+    default: 
+      len = 16;
+      strncpy(strbuf, "Undefined Error\n", len);
+  }
+
+  return len;
+}
