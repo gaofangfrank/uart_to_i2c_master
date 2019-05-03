@@ -9,7 +9,7 @@
 #ifndef DEFINES_H_
 #define DEFINES_H_
 
-#define SYSCLK 1000000
+#define SYSCLK 8000000
 
 typedef unsigned char u8;
 

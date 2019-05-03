@@ -9,7 +9,7 @@
 #ifndef I2C_H_
 #define I2C_H_
 
-#include <avr/iom328.h>
+#include <avr/io.h>
 #include <string.h>
 #include "defines.h"
 
@@ -32,7 +32,7 @@ typedef unsigned char u8;
 void i2c_init(void);
 
 // returns status codes
-void i2c_start(void);
+u8 i2c_start(void);
 u8 i2c_write(u8 data);
 
 // precondition: i2c is in write mode

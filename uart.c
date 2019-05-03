@@ -25,7 +25,7 @@ void uart_send(u8 data){
 	while (!(UCSR0A & (1<<UDRE0)));
 	
   // use CRLF for line termination
-  if (data == '\n'){
+  if (data == '\n' || data == '\r'){
     // send LF
     UDR0 = '\r';
 
@@ -45,30 +45,30 @@ u8 uart_recv(void){
 	// poll rx bit 
 	while (!(UCSR0A & (1<<RXC0)));
 	
-  u8 = UDR0;
+  data = UDR0;
 
   // echo input 
   uart_send(data);
 
-	return u8;
+	return data;
 }
 
-void uart_getline(u8 *buf, unsigned len){
+unsigned uart_getline(u8 *buf, unsigned len){
 	unsigned count;
 	
 	// read up to len chars
 	for (count=0; count<len; count++){
     buf[count] = uart_recv();
 
-    // echo input
-    uart_send(buf[count]);
-
     // check against both CR and LF just to be sure
-    // return number of bytes recieved
+    // return number of bytes received
     if (buf[count] == '\n' || buf[count] == '\r')
-      return count;
+      return count + 1;
+
     // backspace
     else if (buf[count] == '\b' && count > 0){
+      // blank out backspaced char
+      uart_prints(" \b", 2);
       count--;
     }
 	}

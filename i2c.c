@@ -15,18 +15,16 @@
 #define C_STOP ((1<<TWINT) | (1<<TWSTO) | (1<<TWEN))
 
 void i2c_init(void){
-  // set TWBR and prescaler to as low as can be
-  // since 1MHz / 16 < 100kHz
+  // SCL Frequency = Clock frequency / (16+2(TWBR)*(Prescaler(=1)))
+  //               = 8e6/(16+64)=100kHz
   // bitrate register
-  TWBR = 0;
+  TWBR = 0x20;
   // TWPS in status register
   TWSR = 0;
 }
 
 u8 i2c_start(void){
   // send start command 
-  // wait until TWINT is set
-  while (!(TWCR & (1<<TWINT)));
 
   // send command 
   TWCR = C_START;
@@ -40,9 +38,6 @@ u8 i2c_start(void){
 
 
 u8 i2c_write(u8 data){
-  // wait for twint
-  while (!(TWCR & (1<<TWINT)));
-
   // write data
   TWDR = data;
   
@@ -55,8 +50,6 @@ u8 i2c_write(u8 data){
 }
 
 u8 i2c_read(u8 *data, u8 ack){
-  while (!(TWCR & (1<<TWINT)));
-  
   // send read command 
   if (ack)
     TWCR = C_DATA_ACK;
@@ -74,10 +67,17 @@ u8 i2c_read(u8 *data, u8 ack){
 }
 
 void i2c_stop(void){
-  while (!(TWCR & (1<<TWINT)));
+  volatile u8 cr;
+
+  do {
+    cr = TWCR;
+  }while (!(cr & (1<<TWINT)));
 
   TWCR = C_STOP;
-  
+
+  do {
+    cr = TWCR;
+  }while (!(cr & (1<<TWINT)));
 }
 
 unsigned i2c_strerr(u8 status, u8 *strbuf){

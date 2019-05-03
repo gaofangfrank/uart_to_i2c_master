@@ -5,27 +5,26 @@
  * Author : Frank
  */ 
 
-#include <avr/iom328.h>
-#include <util/delay.h>
+#include <avr/io.h>
 #include <stdlib.h>
 #include "uart.h"
 #include "i2c.h"
 
-#define RADDR 0x78
-#define WADDR 0x79
+#define WADDR 0x78
+#define RADDR 0x79
 
 int main(void)
 {
   unsigned n;
-  u8 buf[8];
-  u8 returnbuf[64];
+  char buf[8];
+  char returnbuf[64];
   u8 status;
   unsigned len;
   u8 data;
-  u8 *cptr;
+  char *cptr;
 
   i2c_init();
-  uart_init();
+  uart_init(9600);
   while (1) {
     uart_prints("=>", 2);
     n = uart_getline(buf, 8);
@@ -37,27 +36,37 @@ int main(void)
       len = i2c_strerr(status, returnbuf);
       uart_prints(returnbuf, len);
     }
+	
+    // send stop condition
+    else if (buf[0] == 'p'){
+	    i2c_stop();
+      uart_prints("Written Stop Command\n", 21);
+	}
+	
     // send data
     else if (buf[0] == 'd'){
-      data = (char)strtoul(buf+2, cptr, 16);
+      data = (u8)strtoul(buf+2, &cptr, 16);
 
       status = i2c_write(data);
       // print status
-      len = i2c_strerror(status, returnbuf);
+      len = i2c_strerr(status, returnbuf);
       uart_prints(returnbuf, len);
     }
-    // send data
+	
+    // read data
     else if (buf[0] == 'r'){
       if (buf[1] == 'a')
         status = i2c_read(&data, 1);
       else if (buf[1] == 'n')
         status = i2c_read(&data, 0);
+	  else 
+		  continue;
 
       uart_send(data);
       uart_send('\n');
 
       // print status
-      len = i2c_strerror(status, returnbuf);
+      len = i2c_strerr(status, returnbuf);
       uart_prints(returnbuf, len);
     }
   }
