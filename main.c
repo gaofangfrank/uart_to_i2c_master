@@ -44,7 +44,7 @@ int main(void)
 	}
 	
     // send data
-    else if (buf[0] == 'd'){
+    else if (buf[0] == 'w'){
       data = (u8)strtoul(buf+2, &cptr, 16);
 
       status = i2c_write(data);

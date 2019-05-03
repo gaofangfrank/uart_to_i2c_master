@@ -9,7 +9,7 @@ Implements a interpreter which takes five commands (as of now) to control a I2C 
 | Command      | Description                                                  |
 |--------------|--------------------------------------------------------------|
 | s            | Send the start bit                                           |
-| d <hex data> | Send data - must come  after start command                   |
+| w <hex data> | Send data - must come after start command eg. `w a8`         |
 | ra           | Reads a byte and send ACK - must  come after start command   |
 | rn           | Reads a byte and send NACK - must  come after start command  |
 | p            | Sends stop bit                                               |
